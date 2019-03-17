@@ -7,6 +7,7 @@ import tensorflow as tf
 import argparse
 import numpy as np
 import cv2
+import json
 
 # creates a Flask application, named app
 app = Flask(__name__)
@@ -33,10 +34,11 @@ def prepare_faces(image):
     """ Prepare image to the requirements of the model"""
     facecascade = cv2.CascadeClassifier(cascade)
     faces = extract_faces(image, facecascade)
-    if len(faces) == 0:
+    if len(faces["face_cropped"]) == 0:
         raise ValueError("-1")
-    data_in = face_as_net_input(faces[0], tuple([48, 48])).astype('f')
-    return data_in
+    faces["ready_face"] = face_as_net_input(faces["face_cropped"][0], tuple([48, 48])).astype('f')
+    faces.pop("face_cropped")
+    return faces
 
 
 def data_uri_to_cv2_img(url):
@@ -55,11 +57,14 @@ def classify():
     data_url = request.form.get('imgBase64')
     img_cv2 = data_uri_to_cv2_img(data_url)
     try:
-        img_ndarray_faces = prepare_faces(img_cv2)
+        img_dictionary_faces = prepare_faces(img_cv2)
     except ValueError as v:
-        return str(v)
-    r = smile_detecting(img_ndarray_faces, model)
-    return r
+        #faces_list = {"detection_result": "-1"}
+        return json.dumps({"detection_result": "-1"})
+    img_dictionary_faces["detection_result"] = smile_detecting(img_dictionary_faces["ready_face"], model)
+    img_dictionary_faces.pop("ready_face")
+    img_dictionary_faces = json.dumps(img_dictionary_faces)
+    return img_dictionary_faces
 
 
 # run the application

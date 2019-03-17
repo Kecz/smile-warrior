@@ -15,7 +15,6 @@ def main():
     will be adjusted for Smile-Warrior needs and second for output file where new dataset will be created.
 
     """
-
     # Parser with paths to csv files from command-line arguments
     args = parse_args()
     data_set = pd.read_csv(args.input)

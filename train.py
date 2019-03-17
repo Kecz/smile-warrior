@@ -9,6 +9,7 @@ from keras import optimizers
 from keras.callbacks import ModelCheckpoint, TensorBoard
 
 
+
 def prepare_data(dataset):
     """
     This module prepares data for training and validation process.
@@ -125,11 +126,11 @@ def parse_args():
     parser.add_argument('--learning_rate', '-lr', help='specifies learning rate', type=float, default=0.0001)
 
     parser.add_argument('--models_dir', '-md', help='specifies saving directory for models',
-                        default='model.{epoch:02d}.hdf5')
+                        default='modelv2.{epoch:02d}.hdf5')
 
     parser.add_argument('--logs_dir', '-ld', help='specifies saving directory for logs', default='logs')
 
-    parser.add_argument('--model_load', '-ml', help='specifies path for loading models', default="model.0{}.hdf5")
+    parser.add_argument('--model_load', '-ml', help='specifies path for loading models', default="modelv2.0{}.hdf5")
 
     return parser.parse_args()
 

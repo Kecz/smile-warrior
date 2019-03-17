@@ -3,7 +3,7 @@ This repo contains code used for smile detector for project of Gradient Science 
 
 # To launch web app:
 ```
-py app.py --cascade  haarcascade_frontalface_default.xml --model  model.hdf5 --weight  weights.03.hdf5
+python app.py --cascade  haarcascade_frontalface_default.xml --model  model.hdf5 --weight  weights.03.hdf5
 ```
 
 ## To create dataset:

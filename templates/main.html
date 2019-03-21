@@ -1,39 +1,118 @@
-<!-- TODO
-  * Display rectangle with face detected.
-  * Center the camera image.
-  -->
+<!--
+Configuration to show 2 videos, one with rectangle on detected face and one without
+
+#c1 {
+  /*display: block;*/
+  margin-left: auto;
+  margin-right: auto;
+  width: 48%;
+   /*display: none;*/
+}
+video{
+  /* display: none;*/
+    /* display: block;*/
+  margin-left: auto;
+  margin-right: auto;
+  width: 48%;
+}
+
+Configuration to show 1 videos - without rectangle on detected face
+
+#c1 {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+   display: none;
+}
+video{
+   /*display: none;*/
+     display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+-->
+
 <html>
   <head>
     <title></title>
     <meta content="">
     <style>
 #c1 {
- /* display: none;*/
+  /*display: block;*/
+  margin-left: auto;
+  margin-right: auto;
+  width: 48%;
+   /*display: none;*/
 }
 video{
-    display: none;
+  /* display: none;*/
+    /* display: block;*/
+  margin-left: auto;
+  margin-right: auto;
+  width: 48%;
 }
 #prettyoutput {
+      display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
     background-color: coral;
   font-size: 30px;
-  text-align: left;
-  width: 640px;
+  text-align: center;
+  width: 1000px;
   font-family: monospace;
   white-space: pre;
+}
+#title {
+      display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  font-size: 50px;
+  text-align: center;
+  width: 500px;
+  font-family:"Comic Sans MS";
+}
+#button {
+      display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  text-align: center;
+  width: 500px;
+  font-family:"Comic Sans MS";
 }
     </style>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   </head>
   <body>
+  <div id="title">
+    Smile Warrior  </span>
+</div>
 <<video autoplay></video>
 <canvas id="c1" width="320" height="192"></canvas>
 <div id="output"></div>
 <div id="prettyoutput">
     smile:     <span id="smile" > </span>
 </div>
+<button onclick="myFunction()" id="button">Zapisywanie zdjecia</button>
 
 <script>
 
+var zapisywanie = -1;
+
+function myFunction() {
+  zapisywanie = zapisywanie *-1;
+    if (zapisywanie == 1) {
+        document.getElementById('button').innerHTML = ' Photo save: ACTIVE';
+    }
+    else{
+        document.getElementById('button').innerHTML = 'Photo save: INACTIVE';
+    }
+}
 
 const constraints = {
   video: true
@@ -52,9 +131,10 @@ navigator.mediaDevices.getUserMedia(constraints).
   });
 
 let timerCallback = function() {
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas_ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+    scale= 1.0;
+    canvas.width = video.videoWidth * scale;
+    canvas.height = video.videoHeight * scale;
+    canvas_ctx.drawImage(video, 0, 0, video.videoWidth*scale, video.videoHeight * scale);
     if (canvas.width != 0) {
         let frame = canvas_ctx.getImageData(0, 0, video.videoWidth, video.videoHeight);
         let l = frame.data.length / 4;
@@ -65,7 +145,8 @@ let timerCallback = function() {
             url: "http://localhost:5000/classify",
             data: {
                 imgBase64: urlData,
-                imgName: "webcam.png"
+                imgName: "webcam.png",
+                int: zapisywanie
             }
         }).done(function(data) {
             var result=JSON.parse(data);
@@ -75,10 +156,13 @@ let timerCallback = function() {
                 canvas_ctx.rect(parseInt(result.x[0]),parseInt(result.y[0]),parseInt(result.w[0]),parseInt(result.h[0]));
                 canvas_ctx.stroke();
                 if (smile_ratio >= 0.5) {
-                    document.getElementById("smile").innerHTML = "smile not detected :(";
+                    document.getElementById("smile").innerHTML = "Smile not detected   Score: "+ Math.round((1-smile_ratio)*100) + "%";
                 }
                 else {
-                    document.getElementById("smile").innerHTML = "smile";
+                    zapisywanie = -1;
+                    document.getElementById('button').innerHTML = 'Photo save: INACTIVE';
+
+                    document.getElementById("smile").innerHTML = "Smile detected       Score:  " + Math.round((1-smile_ratio)*100) + "%";
                 }
             }
 

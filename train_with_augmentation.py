@@ -121,14 +121,14 @@ def parse_args():
 
     parser.add_argument('--batch_size', '-b', help='number of images in one batch', type=int, default=32)
 
-    parser.add_argument('--epochs', '-e', help='number of training epochs', type=int, default=10)
+    parser.add_argument('--epochs', '-e', help='number of training epochs', type=int, default=3)
 
     parser.add_argument('--saving_period', '-s', help='how many epochs must pass before saving', type=int, default=1)
 
     parser.add_argument('--learning_rate', '-lr', help='specifies learning rate', type=float, default=0.0001)
 
     parser.add_argument('--models_dir', '-md', help='specifies saving directory for models',
-                        default='wagi_z_aug_V2/modelv2.{epoch:02d}.hdf5')
+                        default='wagi_z_aug_V2/model_aug.{epoch:02d}.hdf5')
 
     parser.add_argument('--logs_dir', '-ld', help='specifies saving directory for logs', default='logs')
 
@@ -153,8 +153,8 @@ def main():
     datagen.fit(x_train)
 
     model.fit_generator(datagen.flow(x_train, y_train,
-              batch_size = batch_size), steps_per_epoch=(len(x_train)/batch_size), epochs=epochs, verbose=1, shuffle=False,
-              validation_data=(x_validate, y_validate), callbacks=[checkpointer, tensorboard])
+        batch_size=batch_size), steps_per_epoch=(len(x_train)/batch_size), epochs=epochs, verbose=1, shuffle=False,
+        validation_data=(x_validate, y_validate), callbacks=[checkpointer, tensorboard])
 
 
 if __name__ == "__main__":
